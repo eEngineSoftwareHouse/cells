@@ -1,9 +1,11 @@
-require "uber/delegates"
-
 module Cell
   class ViewModel
     extend Abstract
     abstract!
+
+    def controller_path
+      self.class.controller_path
+    end
 
     extend Uber::InheritableAttr
     extend Uber::Delegates
@@ -18,6 +20,7 @@ module Cell
     end
 
     include Prefixes
+    extend SelfContained
     extend Util
 
     def self.controller_path
@@ -27,10 +30,17 @@ module Cell
     attr_reader :model
 
     module Helpers
-      # Constantizes name if needed, call builders and returns instance.
+      # Constantizes name, call builders and returns instance.
       def cell(name, *args, &block) # classic Rails fuzzy API.
-        constant = name.is_a?(Class) ? name : class_from_cell_name(name)
-        constant.(*args, &block)
+        class_from_cell_name(name).(*args, &block)
+      end
+
+    private
+      # Renders collection of cells.
+      def render_collection(array, options) # private.
+        method = options.delete(:method) || :show
+        join   = options.delete(:collection_join)
+        array.collect { |model| build(model, options).call(method) }.join(join).html_safe
       end
     end
     extend Helpers
@@ -45,8 +55,8 @@ module Cell
       #   SongCell.(@song)
       #   SongCell.(collection: Song.all)
       def call(model=nil, options={}, &block)
-        if model.is_a?(Hash) and array = model[:collection]
-          return Collection.new(array, model.merge(options), self)
+        if model.is_a?(Hash) and array = model.delete(:collection)
+          return render_collection(array, model.merge(options))
         end
 
         build(model, options)
@@ -56,62 +66,56 @@ module Cell
 
     private
       def class_from_cell_name(name)
-        util.constant_for("#{name}_cell")
+        "#{name}_cell".camelize.constantize
       end
     end
 
-    # Build nested cell in instance.
+    # Get nested cell in instance.
     def cell(name, model=nil, options={})
-      context = Context[options[:context], self.context]
-
-      self.class.cell(name, model, options.merge(context: context))
+      self.class.cell(name, model, options.merge(controller: parent_controller))
     end
 
     def initialize(model=nil, options={})
+      @parent_controller = options[:controller] # TODO: filter out controller in a performant way.
+
       setup!(model, options)
     end
-
-    def context
-      @options[:context]
-    end
-
-    # DISCUSS: we could use the same mechanism as TRB::Skills here for speed at runtime?
-    class Context# < Hash
-      # Only dup&merge when :context was passed in parent.cell(context: ..)
-      # Otherwise we can simply pass on the old context.
-      def self.[](options, context)
-        return context unless options
-        context.dup.merge(options) # DISCUSS: should we create a real Context object here, to make it overridable?
-      end
-    end
+    attr_reader :parent_controller
+    alias_method :controller, :parent_controller
 
     module Rendering
       # Invokes the passed method (defaults to :show) while respecting caching.
       # In Rails, the return value gets marked html_safe.
-      def call(state=:show, *args, &block)
-        content = render_state(state, *args, &block)
+      def call(state=:show, *args)
+        content = render_state(state, *args)
         content.to_s
       end
 
-      # Since 4.1, you get the #show method for free.
-      def show(&block)
-        render(&block)
-      end
-
       # render :show
-      def render(options={}, &block)
+      def render(options={})
         options = normalize_options(options)
-        render_to_string(options, &block)
+        render_to_string(options)
       end
 
     private
-      def render_to_string(options, &block)
+      def render_to_string(options)
         template = find_template(options)
-        render_template(template, options, &block)
+        content  = render_template(template, options)
+
+        # TODO: allow other (global) layout dirs.
+        with_layout(options, content)
       end
 
-      def render_state(*args, &block)
-        __send__(*args, &block)
+      def render_state(*args)
+        __send__(*args)
+      end
+
+      def with_layout(options, content)
+        return content unless layout = options[:layout]
+
+        template = find_template(options.merge view: layout) # we could also allow a different layout engine, etc.
+
+        render_template(template, options) { content }
       end
 
       def render_template(template, options, &block)

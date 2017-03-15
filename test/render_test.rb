@@ -47,10 +47,6 @@ class SongCell < Cell::ViewModel
     "send"
   end
 
-  def with_block
-    render { "Clean Sheets" + render(:with_html) }
-  end
-
 private
   def title
     "Papertiger"
@@ -59,22 +55,25 @@ end
 
 class RenderTest < MiniTest::Spec
   # render show.haml calling method, implicit render.
-  it { SongCell.new(nil).show.must_equal "Papertiger" }
+  it { SongCell.new(nil).show.must_equal "Papertiger\n" }
 
   # render ivar.haml using instance variable.
-  it { SongCell.new(nil).ivar.must_equal "Carnage" }
+  it { SongCell.new(nil).ivar.must_equal "Carnage\n" }
 
   # render string.
   it { SongCell.new(nil).string.must_equal "Right" }
 
   # #call renders :show
-  it { SongCell.new(nil).call.must_equal "Papertiger" }
+  it { SongCell.new(nil).call.must_equal "Papertiger\n" }
 
   # call(:form) renders :form
-  it { SongCell.new(nil).call(:with_view_name).must_equal "Man Of Steel" }
+  it { SongCell.new(nil).call(:with_view_name).must_equal "Man Of Steel\n" }
 
   # works with state called `send`
   it { SongCell.new(nil).call(:send).must_equal "send" }
+
+  # #call returns html_safe.
+  it { SongCell.new(nil).call.must_be_instance_of ActiveSupport::SafeBuffer }
 
   # throws an exception when not found.
   it do
@@ -83,10 +82,10 @@ class RenderTest < MiniTest::Spec
   end
 
   # allows locals
-  it { SongCell.new(nil).with_locals.must_equal "Shot Across The Bow280" }
+  it { SongCell.new(nil).with_locals.must_equal "Shot Across The Bow\n280\n" }
 
   # render :form is a shortcut.
-  it { SongCell.new(nil).with_view_name.must_equal "Man Of Steel" }
+  it { SongCell.new(nil).with_view_name.must_equal "Man Of Steel\n" }
 
   # :template_engine renders ERB.
   # it { SongCell.new(nil).with_erb.must_equal "ERB:\n<span>\n  Papertiger\n</span>" }
@@ -100,9 +99,6 @@ class RenderTest < MiniTest::Spec
 
   # doesn't escape HTML.
   it { SongCell.new(nil).call(:with_html).must_equal "<p>Yew!</p>" }
-
-  # render {} with block
-  it { SongCell.new(nil).with_block.must_equal "Yo! Clean Sheets<p>Yew!</p>" }
 end
 
 # test inheritance

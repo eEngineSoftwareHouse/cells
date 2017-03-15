@@ -1,30 +1,46 @@
-lib = File.expand_path("../lib/", __FILE__)
-$:.unshift lib unless $:.include?(lib)
+# -*- encoding: utf-8 -*-
+# stub: cells 4.1.0 ruby lib
 
-require "cell/version"
+Gem::Specification.new do |s|
+  s.name = "cells"
+  s.version = "4.1.0"
 
-Gem::Specification.new do |spec|
-  spec.name        = "cells"
-  spec.version     = Cell::VERSION
-  spec.platform    = Gem::Platform::RUBY
-  spec.authors     = ["Nick Sutterer"]
-  spec.email       = ["apotonick@gmail.com"]
-  spec.homepage    = "https://github.com/apotonick/cells"
-  spec.summary     = %q{View Models for Ruby and Rails.}
-  spec.description = %q{View Models for Ruby and Rails, replacing helpers and partials while giving you a clean view architecture with proper encapsulation.}
-  spec.license     = "MIT"
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.require_paths = ["lib"]
+  s.authors = ["Nick Sutterer"]
+  s.date = "2016-01-11"
+  s.description = "Cells replaces partials and helpers with OOP view models, giving you proper encapsulation, inheritance, testability and a cleaner view architecture."
+  s.email = ["apotonick@gmail.com"]
+  s.files = [".gitignore", ".travis.yml", "CHANGES.md", "Gemfile", "README.md", "Rakefile", "TODO.md", "benchmarks/class_builder.rb", "cells.gemspec", "gemfiles/rails3.2.gemfile", "gemfiles/rails4.0.gemfile", "gemfiles/rails4.1.gemfile", "gemfiles/rails4.2.gemfile", "lib/cell.rb", "lib/cell/abstract.rb", "lib/cell/builder.rb", "lib/cell/caching.rb", "lib/cell/caching/notification.rb", "lib/cell/concept.rb", "lib/cell/development.rb", "lib/cell/escaped.rb", "lib/cell/layout.rb", "lib/cell/partial.rb", "lib/cell/prefixes.rb", "lib/cell/rails.rb", "lib/cell/railtie.rb", "lib/cell/self_contained.rb", "lib/cell/templates.rb", "lib/cell/test_case.rb", "lib/cell/testing.rb", "lib/cell/translation.rb", "lib/cell/twin.rb", "lib/cell/util.rb", "lib/cell/version.rb", "lib/cell/view_model.rb", "lib/cells.rb", "lib/rails/generators/cell/cell_generator.rb", "lib/rails/generators/cell/templates/cell.rb.erb", "lib/rails/generators/cell/templates/view.erb", "lib/rails/generators/cell/templates/view.haml", "lib/rails/generators/cell/templates/view.slim", "lib/rails/generators/concept/concept_generator.rb", "lib/rails/generators/concept/templates/concept.rb.erb", "lib/rails/generators/concept/templates/view.erb", "lib/rails/generators/concept/templates/view.haml", "lib/rails/generators/concept/templates/view.slim", "lib/rails/generators/test_unit/cell/cell_generator.rb", "lib/rails/generators/test_unit/cell/templates/unit_test.rb.erb", "lib/rails/generators/test_unit/concept/concept_generator.rb", "lib/rails/generators/test_unit/concept/templates/unit_test.rb.erb", "lib/tasks/cells.rake", "test/builder_test.rb", "test/caching_test.rb", "test/cell_benchmark.rb", "test/cell_generator_test.rb", "test/cell_test.rb", "test/concept_generator_test.rb", "test/concept_test.rb", "test/dummy/Rakefile", "test/dummy/app/assets/javascripts/application.js", "test/dummy/app/cells/album/assets/album.js", "test/dummy/app/concepts/song/assets/songs.js", "test/dummy/app/controllers/application_controller.rb", "test/dummy/app/views/layouts/application.html.erb", "test/dummy/app/views/musician/featured.html.erb", "test/dummy/app/views/musician/featured_with_block.html.erb", "test/dummy/app/views/musician/hamlet.html.erb", "test/dummy/app/views/musician/title.erb", "test/dummy/config.ru", "test/dummy/config/application.rb", "test/dummy/config/boot.rb", "test/dummy/config/database.yml", "test/dummy/config/environment.rb", "test/dummy/config/locales/en.yml", "test/dummy/config/routes.rb", "test/dummy/script/rails", "test/fixtures/bassist/play.erb", "test/fixtures/comment/layout/show.erb", "test/fixtures/comment/show/show.erb", "test/fixtures/concepts/record/views/layout.erb", "test/fixtures/concepts/record/views/show.erb", "test/fixtures/concepts/record/views/song.erb", "test/fixtures/inherit_views_test/popper/tap.erb", "test/fixtures/inherit_views_test/tapper/play.erb", "test/fixtures/inherit_views_test/tapper/tap.erb", "test/fixtures/partial_test/with_partial/show.erb", "test/fixtures/partials/_show.html.erb", "test/fixtures/partials/_show.xml.erb", "test/fixtures/song/ivar.erb", "test/fixtures/song/show.erb", "test/fixtures/song/with_erb.erb", "test/fixtures/song/with_html.erb", "test/fixtures/song/with_locals.erb", "test/fixtures/song_with_layout/happy.erb", "test/fixtures/song_with_layout/merry.erb", "test/fixtures/song_with_layout/show.erb", "test/fixtures/song_with_layout/show_with_layout.erb", "test/fixtures/templates_caching_test/song/show.erb", "test/fixtures/url_helper_test/song/edit.erb", "test/fixtures/url_helper_test/song/with_block.erb", "test/fixtures/url_helper_test/song/with_capture.erb", "test/fixtures/url_helper_test/song/with_content_tag.erb", "test/fixtures/url_helper_test/song/with_form_for_block.erb", "test/fixtures/url_helper_test/song/with_link_to.erb", "test/layout_test.rb", "test/partial_test.rb", "test/prefixes_test.rb", "test/property_test.rb", "test/public_test.rb", "test/rails/translation_test.rb", "test/rails4.2/.gitignore", "test/rails4.2/Gemfile", "test/rails4.2/README.rdoc", "test/rails4.2/Rakefile", "test/rails4.2/app/assets/images/.keep", "test/rails4.2/app/assets/stylesheets/application.css.erb", "test/rails4.2/app/cells/form_for/show.erb", "test/rails4.2/app/cells/form_for_cell.rb", "test/rails4.2/app/cells/form_tag/show.erb", "test/rails4.2/app/cells/form_tag_cell.rb", "test/rails4.2/app/cells/formtastic/show.erb", "test/rails4.2/app/cells/formtastic_cell.rb", "test/rails4.2/app/cells/simple_form/show.erb", "test/rails4.2/app/cells/simple_form_cell.rb", "test/rails4.2/app/cells/song/song.css", "test/rails4.2/app/cells/song/with_escaped.erb", "test/rails4.2/app/cells/song_cell.rb", "test/rails4.2/app/controllers/application_controller.rb", "test/rails4.2/app/controllers/concerns/.keep", "test/rails4.2/app/controllers/index_controller.rb", "test/rails4.2/app/controllers/songs_controller.rb", "test/rails4.2/app/helpers/application_helper.rb", "test/rails4.2/app/mailers/.keep", "test/rails4.2/app/models/.keep", "test/rails4.2/app/models/artist.rb", "test/rails4.2/app/models/concerns/.keep", "test/rails4.2/app/models/song.rb", "test/rails4.2/app/views/index/index.html.erb", "test/rails4.2/app/views/layouts/application.html.erb", "test/rails4.2/app/views/songs/show.html.erb", "test/rails4.2/app/views/songs/with_escaped.html.erb", "test/rails4.2/bin/bundle", "test/rails4.2/bin/rails", "test/rails4.2/bin/rake", "test/rails4.2/bin/setup", "test/rails4.2/config.ru", "test/rails4.2/config/application.rb", "test/rails4.2/config/boot.rb", "test/rails4.2/config/environment.rb", "test/rails4.2/config/environments/development.rb", "test/rails4.2/config/environments/production.rb", "test/rails4.2/config/environments/test.rb", "test/rails4.2/config/initializers/backtrace_silencers.rb", "test/rails4.2/config/initializers/cookies_serializer.rb", "test/rails4.2/config/initializers/filter_parameter_logging.rb", "test/rails4.2/config/initializers/formtastic.rb", "test/rails4.2/config/initializers/inflections.rb", "test/rails4.2/config/initializers/mime_types.rb", "test/rails4.2/config/initializers/session_store.rb", "test/rails4.2/config/initializers/wrap_parameters.rb", "test/rails4.2/config/locales/en.yml", "test/rails4.2/config/routes.rb", "test/rails4.2/config/secrets.yml", "test/rails4.2/db/seeds.rb", "test/rails4.2/engines/my_engine/.gitignore", "test/rails4.2/engines/my_engine/Gemfile", "test/rails4.2/engines/my_engine/MIT-LICENSE", "test/rails4.2/engines/my_engine/README.rdoc", "test/rails4.2/engines/my_engine/Rakefile", "test/rails4.2/engines/my_engine/app/assets/images/my_engine/.keep", "test/rails4.2/engines/my_engine/app/assets/stylesheets/my_engine/application.css", "test/rails4.2/engines/my_engine/app/concepts/user/cell.rb", "test/rails4.2/engines/my_engine/app/concepts/user/views/show.erb", "test/rails4.2/engines/my_engine/app/concepts/user/views/user.scss", "test/rails4.2/engines/my_engine/app/controllers/my_engine/application_controller.rb", "test/rails4.2/engines/my_engine/app/controllers/my_engine/user_controller.rb", "test/rails4.2/engines/my_engine/app/helpers/my_engine/application_helper.rb", "test/rails4.2/engines/my_engine/app/models/my_engine/user.rb", "test/rails4.2/engines/my_engine/app/views/layouts/my_engine/application.html.erb", "test/rails4.2/engines/my_engine/app/views/my_engine/user/show.html.erb", "test/rails4.2/engines/my_engine/bin/rails", "test/rails4.2/engines/my_engine/config/routes.rb", "test/rails4.2/engines/my_engine/db/migrate/20150530135920_create_my_engine_users.rb", "test/rails4.2/engines/my_engine/lib/my_engine.rb", "test/rails4.2/engines/my_engine/lib/my_engine/engine.rb", "test/rails4.2/engines/my_engine/lib/my_engine/version.rb", "test/rails4.2/engines/my_engine/lib/tasks/my_engine_tasks.rake", "test/rails4.2/engines/my_engine/my_engine.gemspec", "test/rails4.2/engines/my_engine/test/fixtures/my_engine/users.yml", "test/rails4.2/engines/my_engine/test/models/my_engine/user_test.rb", "test/rails4.2/lib/assets/.keep", "test/rails4.2/lib/tasks/.keep", "test/rails4.2/log/.keep", "test/rails4.2/test/integration/asset_pipeline_test.rb", "test/rails4.2/test/integration/controller_test.rb", "test/rails4.2/test/integration/form_for_test.rb", "test/rails4.2/test/integration/form_tag_test.rb", "test/rails4.2/test/integration/formtastic_test.rb", "test/rails4.2/test/integration/simple_form_test.rb", "test/rails4.2/test/integration/url_helper_test.rb", "test/rails4.2/test/test_helper.rb", "test/rails4.2/vendor/assets/stylesheets/.keep", "test/rails_extensions_test.rb", "test/render_test.rb", "test/templates_test.rb", "test/test_case_test.rb", "test/test_helper.rb", "test/twin_test.rb"]
+  s.homepage = "https://github.com/apotonick/cells"
+  s.licenses = ["MIT"]
+  s.rubygems_version = "2.4.6"
+  s.summary = "View Models for Ruby and Rails."
 
-  spec.files         = `git ls-files`.split("\n")
-  spec.test_files    = `git ls-files -- {test}/*`.split("\n")
-  spec.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  if s.respond_to? :specification_version then
+    s.specification_version = 4
 
-  spec.add_dependency "uber", "< 0.2.0"
-  spec.add_dependency "declarative-option", "< 0.2.0"
-  spec.add_dependency "declarative-builder", "< 0.2.0"
-  spec.add_dependency "tilt", ">= 1.4", "< 3"
-
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "capybara"
-  spec.add_development_dependency "cells-erb", ">= 0.0.4"
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<uber>, ["~> 0.0.9"])
+      s.add_runtime_dependency(%q<tilt>, ["< 3", ">= 1.4"])
+      s.add_development_dependency(%q<rake>, [">= 0"])
+      s.add_development_dependency(%q<minitest-reporters>, [">= 0"])
+      s.add_development_dependency(%q<capybara>, [">= 0"])
+      s.add_development_dependency(%q<cells-erb>, [">= 0.0.4"])
+    else
+      s.add_dependency(%q<uber>, ["~> 0.0.9"])
+      s.add_dependency(%q<tilt>, ["< 3", ">= 1.4"])
+      s.add_dependency(%q<rake>, [">= 0"])
+      s.add_dependency(%q<minitest-reporters>, [">= 0"])
+      s.add_dependency(%q<capybara>, [">= 0"])
+      s.add_dependency(%q<cells-erb>, [">= 0.0.4"])
+    end
+  else
+    s.add_dependency(%q<uber>, ["~> 0.0.9"])
+    s.add_dependency(%q<tilt>, ["< 3", ">= 1.4"])
+    s.add_dependency(%q<rake>, [">= 0"])
+    s.add_dependency(%q<minitest-reporters>, [">= 0"])
+    s.add_dependency(%q<capybara>, [">= 0"])
+    s.add_dependency(%q<cells-erb>, [">= 0.0.4"])
+  end
 end

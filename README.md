@@ -3,7 +3,6 @@
 *View Components for Ruby and Rails.*
 
 [![Gitter Chat](https://badges.gitter.im/trailblazer/chat.svg)](https://gitter.im/trailblazer/chat)
-[![TRB Newsletter](https://img.shields.io/badge/TRB-newsletter-lightgrey.svg)](http://trailblazer.to/newsletter/)
 [![Build
 Status](https://travis-ci.org/apotonick/cells.svg)](https://travis-ci.org/apotonick/cells)
 [![Gem Version](https://badge.fury.io/rb/cells.svg)](http://badge.fury.io/rb/cells)
@@ -12,7 +11,7 @@ Status](https://travis-ci.org/apotonick/cells.svg)](https://travis-ci.org/apoton
 
 Cells allow you to encapsulate parts of your UI into components into _view models_. View models, or cells, are simple ruby classes that can render templates.
 
-Nevertheless, a cell gives you more than just a template renderer. They allow proper OOP, polymorphic builders, [nesting](#nested-cells), view inheritance, using Rails helpers, [asset packaging](http://trailblazer.to/gems/cells/rails.html#asset-pipeline) to bundle JS, CSS or images, simple distribution via gems or Rails engines, encapsulated testing, [caching](#caching), and [integrate with Trailblazer](https://github.com/trailblazer/trailblazer-cells).
+Nevertheless, a cell gives you more than just a template renderer. They allow proper OOP, polymorphic builders, [nesting](#nested-cells), view inheritance, using Rails helpers, [asset packaging](http://trailblazer.to/gems/cells/rails.html#asset-pipeline) to bundle JS, CSS or images, simple distribution via gems or Rails engines, encapsulated testing, [caching](#caching), and [integrate with Trailblazer](#concept-cells).
 
 ## Full Documentation
 
@@ -149,7 +148,7 @@ It is completely up to you how you test, whether it's RSpec, MiniTest or whateve
 
 ## Properties
 
-The cell's model is available via the `model` reader. You can have automatic readers to the model's fields by using `::property`.
+The cell's model is available via the `model` reader. You can have automatic readers to the model's fields by uing `::property`.
 
 ```ruby
 class CommentCell < Cell::ViewModel
@@ -180,25 +179,18 @@ Properties and escaping are [documented here](http://trailblazer.to/gems/cells/a
 
 ## Installation
 
-Cells runs with any framework.
+Cells run with all Rails >= 4.0. Lower versions of Rails will still run with Cells, but you will get in trouble with the helpers.
 
 ```ruby
-gem "cells"
+gem 'cells', "~> 4.0.0"
 ```
 
-For Rails, please use the [cells-rails](https://github.com/trailblazer/cells-rails) gem. It supports Rails >= 4.0.
-
-```ruby
-gem "cells-rails"
-```
-
-Lower versions of Rails will still run with Cells, but you will get in trouble with the helpers. (Note: we use Cells in production with Rails 3.2 and Haml and it works great.)
+(Note: we use Cells in production with Rails 3.2 and Haml and it works great.)
 
 Various template engines are supported but need to be added to your Gemfile.
 
 * [cells-erb](https://github.com/trailblazer/cells-erb)
-* [cells-hamlit](https://github.com/trailblazer/cells-hamlit) We strongly recommend using [Hamlit](https://github.com/k0kubun/hamlit) as a Haml replacement.
-* [cells-haml](https://github.com/trailblazer/cells-haml) Make sure to bundle Haml 4.1: `gem "haml", github: "haml/haml", ref: "7c7c169"`. Use `cells-hamlit` instead.
+* [cells-haml](https://github.com/trailblazer/cells-haml) Make sure to bundle Haml 4.1: `gem "haml", github: "haml/haml", ref: "7c7c169"`.
 * [cells-slim](https://github.com/trailblazer/cells-slim)
 
 ```ruby
@@ -209,13 +201,44 @@ In Rails, this is all you need to do. In other environments, you need to include
 
 ```ruby
 class CommentCell < Cell::ViewModel
-  include ::Cell::Erb # or Cell::Hamlit, or Cell::Haml, or Cell::Slim
+  include ::Cell::Erb # or Cell::Haml, or Cell::Slim
 end
 ```
 
+## Concept Cells
+
+To have real self-contained cells you should use the new _concept cell_ which follows the [Trailblazer](http://trailblazerb.org) naming style. Concept cells need to be derived from `Cell::Concept`, sit in a namespace and are usually named `Cell`.
+
+```ruby
+class Comment::Cell < Cell::Concept
+  # ..
+end
+```
+
+Their directory structure looks as follows.
+
+```
+app
+├── concepts
+│   ├── comment
+│   │   ├── cell.rb
+│   │   ├── views
+│   │   │   ├── show.haml
+```
+
+This integrates with Trailblazer where classes for one _concept_ sit in the same directory. Please [read the book](http://leanpub.com/trailblazer) to learn how to use cells with Trailblazer.
+
+Concept cells are rendered using the `concept` helper.
+
+```erb
+<%= concept("comment/cell", @comment) %>
+```
+
+Other than that, normal cells and concept cells are identical.
+
 ## Namespaces
 
-Cells can be namespaced as well.
+Cells can be namespaced as well. This is used for [concept cells](#concept-cells), too.
 
 ```ruby
 module Admin
@@ -346,27 +369,34 @@ In order to render collections, Cells comes with a shortcut.
 
 ```ruby
 comments = Comment.all #=> three comments.
-cell(:comment, collection: comments).()
+cell(:comment, collection: comments)
 ```
 
-This will invoke `cell(:comment, comment).()` three times and concatenate the rendered output automatically.
+This will invoke `cell(:comment, song).()` three times and concatenate the rendered output automatically. In case you don't want `show` but another state rendered, use `:method`.
 
-Learn more [about collections here](http://trailblazer.to/gems/cells/api.html#collection).
+```ruby
+cell(:comment, collection: comments, method: :list)
+```
 
+Note that you _don't_ need to invoke call here, the `:collection` behavior internally handles that for you.
+
+Additional options are passed to every cell constructor.
+
+```ruby
+cell(:comment, collection: comments, style: "awesome", volume: "loud")
+```
 
 ## Builder
 
-Builders allow instantiating different cell classes for different models and options. They introduce polymorphism into cells.
+Often, it is good practice to replace decider code from views or classes into separate sub-cells. Or in case you want to render a polymorphic collection, builders come in handy.
+
+Builders allow instantiating different cell classes for different models and options.
 
 ```ruby
 class CommentCell < Cell::ViewModel
-  include ::Cell::Builder
-
   builds do |model, options|
-    case model
-    when Post; PostCell
-    when Comment; CommentCell
-    end
+    PostCell       if model.is_a?(Post)
+    CommentCell    if model.is_a?(Comment)
   end
 ```
 
@@ -376,7 +406,14 @@ The `#cell` helper takes care of instantiating the right cell class for you.
 cell(:comment, Post.find(1)) #=> creates a PostCell.
 ```
 
-Learn more [about builders here](http://trailblazer.to/gems/cells/api.html#builder).
+This also works with collections.
+
+```ruby
+cell(:comment, collection: [@post, @comment]) #=> renders PostCell, then CommentCell.
+```
+
+Multiple calls to `::builds` will be ORed. If no block returns a class, the original class will be used (`CommentCell`). Builders are inherited.
+
 
 ## Caching
 
@@ -416,7 +453,7 @@ The book picks up where the README leaves off. Go grab a copy and support us - i
 
 ## This is not Cells 3.x!
 
-Temporary note: This is the README and API for Cells 4. Many things have improved. If you want to upgrade, [follow this guide](https://github.com/apotonick/cells/wiki/From-Cells-3-to-Cells-4---Upgrading-Guide). When in trouble, join the [Gitter channel](https://gitter.im/trailblazer/chat).
+Temporary note: This is the README and API for Cells 4. Many things have improved. If you want to upgrade, [follow this guide](https://github.com/apotonick/cells/wiki/From-Cells-3-to-Cells-4---Upgrading-Guide). When in trouble, join us on the IRC (Freenode) #trailblazer channel.
 
 ## LICENSE
 
